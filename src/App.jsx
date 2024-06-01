@@ -1,12 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Product from "./pages/Product";
+import { useEffect, useState } from "react";
 import Pricing from "./pages/Pricing";
 import HomePage from "./pages/HomePage";
 import PageNotFound from "./pages/PageNotFound";
 import AppLayout from "./pages/AppLayout";
 import Login from "./pages/Login";
-import { useEffect, useState } from "react";
 import CityList from "./components/CityList";
+import CountryList from "./components/CountryList";
+import City from "./components/City";
 
 const BASE_URL = "http://localhost:7000";
 
@@ -19,7 +21,7 @@ function App() {
       try {
         setIsLoading(true);
         const res = await fetch(`${BASE_URL}/cities`);
-        const data = res.json();
+        const data = await res.json();
         setCities(data);
       } catch {
         alert("there is a loading error...");
@@ -44,7 +46,11 @@ function App() {
             path="cities"
             element={<CityList cities={cities} isLoading={isLoading} />}
           />
-          <Route path="countries" element={<p>countries</p>} />
+          <Route path="cities/:id" element={<City />} />
+          <Route
+            path="countries"
+            element={<CountryList cities={cities} isLoading={isLoading} />}
+          />
           <Route path="form" element={<p>form</p>} />
         </Route>
         <Route path="login" element={<Login />} />

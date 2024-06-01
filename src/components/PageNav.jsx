@@ -8,13 +8,13 @@ function PageNav() {
       <Logo />
       <ul>
         <li>
-          <NavLink to="product">Product</NavLink>
+          <NavLink to="/product">Product</NavLink>
         </li>
         <li>
-          <NavLink to="pricing">pricing</NavLink>
+          <NavLink to="/pricing">pricing</NavLink>
         </li>
         <li>
-          <NavLink to="login" className="cta">
+          <NavLink to="/login" className="cta">
             Login
           </NavLink>
         </li>

@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import { useUrlPosition } from "../hooks/useUrlPosition";
 import styles from "./Form.module.css";
 import Button from "./Button";
 import ButtonBack from "./ButtonBack";
-import { useUrlPosition } from "../hooks/useUrlPosition";
 import Message from "./Message";
 import Spinner from "./Spinner";
+import { useCities } from "../contexts/CitiesContext";
 
 export function convertToEmoji(countryCode) {
   const codePoints = countryCode
@@ -20,6 +21,7 @@ export function convertToEmoji(countryCode) {
 }
 
 function Forms() {
+  const { createNewCity } = useCities();
   const [lat, lng] = useUrlPosition();
   const [cityName, setCityName] = useState("");
   const [country, setCountry] = useState("");
@@ -31,6 +33,7 @@ function Forms() {
 
   useEffect(
     function () {
+      if (!lat && !lng) return;
       async function fetchCityData() {
         try {
           setIsLoadingGeocoding(true);
@@ -59,12 +62,30 @@ function Forms() {
     [lat, lng]
   );
 
+  function handleSumbitForm(e) {
+    e.preventDefault();
+
+    const newCity = {
+      cityName,
+      country,
+      emoji,
+      date,
+      notes,
+      position: { lat, lng },
+    };
+
+    createNewCity(newCity);
+  }
+
   if (isLoadingGeocoding) return <Spinner />;
+
+  if (!lat && !lng)
+    return <Message message="Start by clicking somwhere on the map." />;
 
   if (geocodingError) return <Message message={geocodingError} />;
 
   return (
-    <form className={styles.form}>
+    <form className={styles.form} onSubmit={handleSumbitForm}>
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
         <input

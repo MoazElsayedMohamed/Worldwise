@@ -11,6 +11,7 @@ import ButtonBack from "./ButtonBack";
 import Message from "./Message";
 import Spinner from "./Spinner";
 import { useCities } from "../contexts/CitiesContext";
+import { useNavigate } from "react-router-dom";
 
 export function convertToEmoji(countryCode) {
   const codePoints = countryCode
@@ -21,7 +22,8 @@ export function convertToEmoji(countryCode) {
 }
 
 function Forms() {
-  const { createNewCity } = useCities();
+  const { createNewCity, isLoading } = useCities();
+  const navigate = useNavigate();
   const [lat, lng] = useUrlPosition();
   const [cityName, setCityName] = useState("");
   const [country, setCountry] = useState("");
@@ -75,6 +77,7 @@ function Forms() {
     };
 
     createNewCity(newCity);
+    navigate("/app/cities");
   }
 
   if (isLoadingGeocoding) return <Spinner />;
@@ -85,7 +88,10 @@ function Forms() {
   if (geocodingError) return <Message message={geocodingError} />;
 
   return (
-    <form className={styles.form} onSubmit={handleSumbitForm}>
+    <form
+      className={`${styles.form} ${isLoading ? styles.form.loading : ""}`}
+      onSubmit={handleSumbitForm}
+    >
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
         <input
